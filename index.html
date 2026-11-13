@@ -2,182 +2,419 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="https://raw.githubusercontent.com/arnetworkhouse-oss/QRify-Pro/main/QRify.png" type="image/png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<link rel="icon" href="https://raw.githubusercontent.com/arnetworkhouse-oss/QRify-Pro/main/QRify.png" type="image/png">
 <title>QRify Pro</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.js"></script>
 
 <style>
-body { background:#020617; color:#f1f5f9; font-family:Inter,sans-serif }
-.glass { background:rgba(30,41,59,.7); backdrop-filter:blur(14px); border:1px solid rgba(255,255,255,.08) }
-.neon { color:#22d3ee; text-shadow:0 0 14px rgba(34,211,238,.55) }
-.active { background:#1e293b; border-color:#22d3ee; color:#22d3ee }
-input:focus, textarea:focus { border-color:#22d3ee; box-shadow:0 0 18px rgba(34,211,238,.25) }
-.global-footer {
-  margin-top: 30px;
-  text-align: center;
-  font-size: 0.8rem;
-  opacity: 0.7;
+:root{--paper:#ece6d8;--card:#f8f4ea;--ink:#14110f;--mute:#6f675b;--hot:#ff4d2e;--line:#14110f}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+button,label,select{touch-action:manipulation}
+[hidden]{display:none!important}
+html{overflow-x:hidden}
+body{overflow-x:hidden;min-height:100vh;padding:28px 18px 40px;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif;
+ background:radial-gradient(circle at 1px 1px,rgba(20,17,15,.16) 1px,transparent 0) 0 0/22px 22px,var(--paper)}
+.mono{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase}
+header{max-width:1120px;margin:0 auto 30px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+h1{font-size:clamp(3.4rem,9vw,6.6rem);font-weight:800;line-height:.82;letter-spacing:-.05em;display:flex;align-items:flex-start;gap:10px}
+h1 em{font-style:normal;color:var(--hot)}
+.tag{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;background:var(--ink);color:var(--paper);padding:5px 9px;border-radius:4px;transform:rotate(6deg);margin-top:8px}
+.sub{max-width:260px;color:var(--mute);font-size:.95rem;line-height:1.35}
+main>*{min-width:0}
+main{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1fr 360px;gap:26px;align-items:start}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:22px;box-shadow:6px 6px 0 var(--ink);margin-bottom:26px;animation:rise .6s both}
+.card:nth-child(2){animation-delay:.1s}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.card h2{display:flex;align-items:center;gap:10px;font-size:1.25rem;font-weight:800;margin-bottom:16px}
+.card h2 b{font-family:'DM Mono',monospace;font-size:.7rem;background:var(--hot);color:#fff;padding:3px 7px;border-radius:4px}
+.tabs,.chips,.swatches,.seg{display:flex;flex-wrap:wrap;gap:8px}
+.tabs{margin-bottom:18px}
+.tab,.chip,.seg button{font:600 .9rem 'Bricolage Grotesque',sans-serif;color:var(--ink);background:rgba(20,17,15,.07);border:2px solid transparent;border-radius:12px;padding:10px 14px;cursor:pointer;transition:.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;outline:none}
+.tab:focus-visible,.chip:focus-visible,.seg button:focus-visible,.sw:focus-visible,.dl button:focus-visible{box-shadow:0 0 0 3px var(--hot)}
+select.in{appearance:none;-webkit-appearance:none;padding-right:38px;background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%2314110f' stroke-width='2' stroke-linecap='round'/></svg>") no-repeat right 14px center/13px}
+.tab:hover,.chip:hover,.seg button:hover{background:rgba(20,17,15,.14)}
+.tab.on,.chip.on,.seg button.on{background:var(--ink);color:var(--paper);box-shadow:0 3px 0 var(--hot)}
+.seg{margin-bottom:12px}
+.in{width:100%;font:500 1rem 'Bricolage Grotesque',sans-serif;color:var(--ink);background:#fff;border:2px solid var(--ink);border-radius:12px;padding:13px 14px;outline:none;transition:.15s}
+.in:focus{box-shadow:4px 4px 0 var(--hot);transform:translate(-2px,-2px)}
+textarea.in{resize:vertical;min-height:120px}
+.stack{display:grid;gap:10px}
+.row{display:grid;grid-template-columns:150px 1fr;gap:10px}
+.hint{color:var(--mute);font-size:.85rem;line-height:1.4}
+.lbl{display:block;margin:18px 0 8px;color:var(--mute)}
+.lbl:first-of-type{margin-top:0}
+.colors{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.clr{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:2px solid var(--ink);border-radius:12px;padding:8px 10px;font-size:.85rem;font-weight:600}
+.clr input{width:34px;height:34px;border:2px solid var(--ink);border-radius:8px;padding:0;background:none;cursor:pointer}
+.clr input:disabled{opacity:.3;cursor:not-allowed}
+.sw{width:38px;height:38px;border-radius:50%;border:2px solid var(--ink);cursor:pointer;transition:.15s}
+.sw:hover{transform:scale(1.15) rotate(-8deg)}
+.toggles{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px}
+.toggles label{display:flex;align-items:center;gap:7px;font-size:.88rem;font-weight:600;cursor:pointer}
+.toggles input{accent-color:var(--hot);width:17px;height:17px}
+.logo{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.drop{flex:1;min-width:180px;display:flex;align-items:center;justify-content:center;gap:8px;border:2px dashed var(--ink);border-radius:12px;padding:14px;font-weight:600;cursor:pointer;background:#fff;transition:.15s}
+.drop:hover{background:var(--hot);color:#fff;border-style:solid}
+.drop input{display:none}
+.thumb{width:52px;height:52px;border-radius:10px;border:2px solid var(--ink);background:#fff center/contain no-repeat}
+.x{border:2px solid var(--ink);background:#fff;border-radius:50%;width:32px;height:32px;font-weight:800;cursor:pointer}
+input[type=range]{width:100%;accent-color:var(--hot)}
+.preview{position:sticky;top:20px;background:var(--ink);color:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:22px;box-shadow:6px 6px 0 var(--hot);animation:rise .6s .2s both}
+.tile{position:relative;background:#fff;border-radius:14px;padding:12px;margin:14px 0}
+.tile::before,.tile::after{content:"";position:absolute;width:22px;height:22px;border:3px solid var(--hot)}
+.tile::before{top:-7px;left:-7px;border-right:0;border-bottom:0}
+.tile::after{bottom:-7px;right:-7px;border-left:0;border-top:0}
+#qr{transition:.3s}
+#qr canvas{width:100%!important;height:auto!important;display:block;border-radius:6px}
+.idle #qr{opacity:.18;filter:blur(3px)}
+.stat{display:flex;justify-content:space-between;gap:8px;color:#b8b0a1;min-height:1.1em}
+.warn{color:#ffb4a6;margin-top:8px;font-size:.8rem}
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.dl button{font:800 1rem 'Bricolage Grotesque',sans-serif;padding:14px;border-radius:12px;border:2px solid var(--paper);cursor:pointer;transition:.15s;color:var(--ink);background:var(--paper)}
+.dl button:first-child{background:var(--hot);border-color:var(--hot);color:#fff}
+.dl button:hover:not(:disabled){transform:translateY(-3px)}
+.dl button:disabled{opacity:.3;cursor:not-allowed}
+.global-footer{max-width:1120px;margin:20px auto 0;text-align:center;font-size:.8rem;color:var(--mute);line-height:1.8}
+.global-footer a{color:var(--ink);font-weight:600;text-decoration:underline;text-decoration-color:var(--hot);text-underline-offset:3px}
+
+/* ---------- MOBILE ---------- */
+@media(max-width:900px){
+  body{padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(28px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+  header{margin-bottom:16px}
+  h1{font-size:clamp(2.8rem,15vw,4.2rem)}
+  .sub{font-size:.85rem;max-width:none}
+  main{grid-template-columns:1fr;gap:0}
+  .card{padding:16px;border-radius:16px;box-shadow:4px 4px 0 var(--ink);margin-bottom:20px}
+  /* sticky mini preview always visible while editing */
+  .preview{order:-1;position:sticky;top:max(8px,env(safe-area-inset-top));z-index:30;display:grid;grid-template-columns:116px minmax(0,1fr);column-gap:14px;align-items:center;padding:12px;margin-bottom:18px;border-radius:18px;box-shadow:4px 4px 0 var(--hot)}
+  .preview>.stat:first-child{grid-column:2;grid-row:1}
+  .tile{grid-column:1;grid-row:1/span 4;margin:0;padding:6px;border-radius:10px}
+  .tile::before,.tile::after{width:14px;height:14px;border-width:2px}
+  .preview>#st{grid-column:2;grid-row:2}
+  .preview>.warn{grid-column:1/-1;grid-row:5;margin-top:8px}
+  .dl{grid-column:2;grid-row:3;margin-top:6px;gap:8px}
+  .dl button{padding:11px 4px;font-size:.95rem;min-height:44px}
+  /* tabs: wrapped 2-col grid, no scroll */
+  .tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 16px;padding:0}
+  .chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .tab{text-align:left}
+  .chip,.seg button{text-align:center;padding:10px 6px;font-size:.85rem}
+  .tab,.chip,.seg button{min-height:46px}
+  .swatches{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+  .in{padding:14px}
+  .sw{width:100%;height:auto;aspect-ratio:1;max-width:48px;justify-self:center}
+  .clr{min-height:52px}
+  .clr input{width:40px;height:40px}
+  .toggles label{min-height:36px}
+  .toggles input{width:22px;height:22px}
+  input[type=range]{height:36px}
+  .x{width:44px;height:44px}
+  .thumb{width:56px;height:56px}
+}
+@media(max-width:480px){
+  .row{grid-template-columns:1fr}
+  .colors{grid-template-columns:1fr 1fr}
+  .clr{font-size:.8rem;padding:6px 8px}
+  .preview{grid-template-columns:100px minmax(0,1fr)}
+  .tab{font-size:.85rem;padding:10px}
+  .tag{font-size:.6rem}
+}
+@media(hover:none){
+  .tab:hover,.chip:hover,.seg button:hover,.sw:hover,.dl button:hover:not(:disabled){transform:none;box-shadow:none}
+  .in:focus{transform:none}
+  .drop:hover{background:#fff;color:var(--ink);border-style:dashed}
 }
 </style>
 </head>
 
-<body class="min-h-screen p-6 md:p-12">
-
-<header class="text-center mb-12">
-<h1 class="text-5xl font-black neon uppercase italic tracking-tight">
-QRify Pro
-</h1>
-<p class="text-slate-500 mt-2">
-Universal QR Automation Platform
-</p>
+<body>
+<header>
+  <h1>QRify<em>.</em><span class="tag">PRO</span></h1>
+  <p class="sub">Universal QR automation. Pick type, style it, add your logo, download.</p>
 </header>
 
-<main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+<main>
+<div>
+  <!-- CONTENT -->
+  <section class="card">
+    <h2><b>01</b> Content</h2>
+    <div class="tabs" id="tabs"></div>
 
-<!-- SIDEBAR -->
-<nav class="lg:col-span-3 space-y-2">
-<button onclick="switchMode('text')" id="btn-text" class="w-full p-4 glass rounded-xl text-left active border">📝 Normal Text</button>
-<button onclick="switchMode('file')" id="btn-file" class="w-full p-4 glass rounded-xl text-left border">📄 PDF / Image / Music / File</button>
-<button onclick="switchMode('whatsapp')" id="btn-whatsapp" class="w-full p-4 glass rounded-xl text-left border">💬 WhatsApp</button>
-<button onclick="switchMode('facebook')" id="btn-facebook" class="w-full p-4 glass rounded-xl text-left border">📘 Facebook</button>
-<button onclick="switchMode('instagram')" id="btn-instagram" class="w-full p-4 glass rounded-xl text-left border">📸 Instagram</button>
-<button onclick="switchMode('linkedin')" id="btn-linkedin" class="w-full p-4 glass rounded-xl text-left border">💼 LinkedIn</button>
-<button onclick="switchMode('url')" id="btn-url" class="w-full p-4 glass rounded-xl text-left border">🔗 Website URL</button>
-<button onclick="switchMode('wifi')" id="btn-wifi" class="w-full p-4 glass rounded-xl text-left border">📶 Wi-Fi</button>
-</nav>
+    <div data-p="text"><textarea class="in" id="tx" placeholder="Type any text here..."></textarea></div>
 
-<!-- INPUT PANEL -->
-<section class="lg:col-span-5 glass p-8 rounded-3xl">
-<h2 id="title" class="text-2xl font-bold mb-6">NORMAL TEXT QR</h2>
+    <div data-p="file" hidden class="stack">
+      <p class="hint">Upload file (PDF, image, audio, doc) to <b>Google Drive</b>, set access to <b>Anyone with the link</b>, paste link below.</p>
+      <input class="in" id="fl" placeholder="Paste public Google Drive link">
+    </div>
 
-<!-- TEXT -->
-<div id="panel-text">
-<textarea id="textInput" rows="5" placeholder="Type any text here..."
-class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl outline-none resize-none"></textarea>
+    <div data-p="wa" hidden>
+      <div class="seg" id="waSeg">
+        <button data-w="direct" class="on">Direct link / number</button>
+        <button data-w="manual">Pick country code</button>
+      </div>
+      <div class="stack">
+        <input class="in" id="waD" placeholder="wa.me link or full number e.g. 919876543210">
+        <div class="row" id="waManual" hidden>
+          <select class="in" id="waCc"></select>
+          <input class="in" id="waN" type="tel" inputmode="numeric" placeholder="Phone number">
+        </div>
+        <input class="in" id="waM" placeholder="Pre-filled message (optional)">
+        <p class="hint" id="waHint">Paste a ready link and it is used as-is. A plain number becomes wa.me/number.</p>
+      </div>
+    </div>
+
+    <div data-p="fb" hidden><input class="in" id="fb" placeholder="Facebook username or full profile link"></div>
+    <div data-p="ig" hidden><input class="in" id="ig" placeholder="Instagram username or full profile link"></div>
+    <div data-p="li" hidden><input class="in" id="li" placeholder="LinkedIn username or full profile link"></div>
+    <div data-p="url" hidden><input class="in" id="ur" placeholder="https://example.com"></div>
+
+    <div data-p="wifi" hidden class="stack">
+      <input class="in" id="ssid" placeholder="Wi-Fi name">
+      <input class="in" id="pass" type="password" placeholder="Password">
+      <select class="in" id="enc"><option value="WPA">WPA / WPA2 / WPA3</option><option value="WEP">WEP</option><option value="nopass">No password</option></select>
+      <div class="toggles"><label><input type="checkbox" id="hid"> Hidden network</label></div>
+    </div>
+  </section>
+
+  <!-- STYLE -->
+  <section class="card">
+    <h2><b>02</b> Style</h2>
+
+    <span class="lbl mono">Palettes</span>
+    <div class="swatches" id="sws"></div>
+
+    <span class="lbl mono">Colors</span>
+    <div class="colors">
+      <label class="clr">Dots <input type="color" id="c1" value="#14110f"></label>
+      <label class="clr">Gradient end <input type="color" id="c2" value="#ff4d2e" disabled></label>
+      <label class="clr">Background <input type="color" id="bg" value="#ffffff"></label>
+      <label class="clr">Eyes <input type="color" id="ec" value="#14110f" disabled></label>
+    </div>
+    <div class="toggles">
+      <label><input type="checkbox" id="grad"> Gradient</label>
+      <label><input type="checkbox" id="eyeM" checked> Eyes match dots</label>
+      <label><input type="checkbox" id="tr"> Transparent bg</label>
+    </div>
+
+    <span class="lbl mono">Dot shape</span>
+    <div class="chips" id="dots"></div>
+    <span class="lbl mono">Eye shape</span>
+    <div class="chips" id="eyes"></div>
+
+    <span class="lbl mono">Logo / photo in center</span>
+    <div class="logo">
+      <label class="drop"><input type="file" id="lf" accept="image/*">⬆ Upload logo or photo</label>
+      <div class="thumb" id="th" hidden></div>
+      <button class="x" id="lx" hidden title="Remove">✕</button>
+    </div>
+    <div style="margin-top:12px" id="lsw" hidden>
+      <span class="mono hint">Logo size <span id="lv">30</span>%</span>
+      <input type="range" id="ls" min="15" max="40" value="30">
+    </div>
+  </section>
 </div>
 
-<!-- FILE -->
-<div id="panel-file" class="hidden space-y-4">
-<p class="text-sm text-slate-400 leading-relaxed">
-Please upload your file (PDF, image, audio, or any document) to <strong>Google Drive</strong>,
-set the file access to <strong>Public / Anyone with the link</strong>,
-and paste the shareable link below.
-</p>
-<input id="fileLink" placeholder="Paste public Google Drive link here"
-class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl outline-none">
-</div>
-
-<!-- WHATSAPP -->
-<div id="panel-whatsapp" class="hidden">
-<input id="wa" type="tel" placeholder="CountryCode + Number"
-class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl outline-none">
-</div>
-
-<!-- FACEBOOK -->
-<div id="panel-facebook" class="hidden">
-<input id="fb" placeholder="Facebook Username"
-class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl outline-none">
-</div>
-
-<!-- INSTAGRAM -->
-<div id="panel-instagram" class="hidden">
-<input id="ig" placeholder="Instagram Username"
-class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl outline-none">
-</div>
-
-<!-- LINKEDIN -->
-<div id="panel-linkedin" class="hidden">
-<input id="li" placeholder="LinkedIn Username"
-class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl outline-none">
-</div>
-
-<!-- URL -->
-<div id="panel-url" class="hidden">
-<input id="url" placeholder="https://example.com"
-class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl outline-none">
-</div>
-
-<!-- WIFI -->
-<div id="panel-wifi" class="hidden space-y-4">
-<input id="ssid" placeholder="WiFi Name"
-class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl outline-none">
-<input id="pass" type="password" placeholder="Password"
-class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl outline-none">
-</div>
-
-<button onclick="generateQR()"
-class="w-full mt-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 font-black rounded-xl uppercase tracking-wider shadow-lg hover:opacity-90">
-Generate QR
-</button>
-</section>
-
-<!-- QR OUTPUT -->
-<section class="lg:col-span-4 glass p-8 rounded-3xl flex flex-col items-center">
-<div id="qrcode" class="bg-white p-4 rounded-xl shadow-2xl mb-6"></div>
-<p id="status" class="text-xs text-slate-500 uppercase tracking-widest mb-6">
-Awaiting Input
-</p>
-<button onclick="downloadQR()"
-class="w-full py-3 border border-slate-600 rounded-xl hover:bg-slate-800 font-bold">
-Download PNG
-</button>
-</section>
-
+<!-- PREVIEW -->
+<aside class="preview idle" id="pv">
+  <div class="stat mono"><span>Live preview</span><span id="cnt"></span></div>
+  <div class="tile"><div id="qr"></div></div>
+  <p class="stat mono" id="st">Awaiting input</p>
+  <p class="warn" id="wn" hidden>⚠ Light dots on dark background. Some scanners fail. Use darker dots.</p>
+  <div class="dl">
+    <button id="dp" disabled>↓ PNG</button>
+    <button id="dj" disabled>↓ JPG</button>
+  </div>
+</aside>
 </main>
 
-<script>
-let mode = 'text'
-
-const qr = new QRCode(document.getElementById("qrcode"), {
-text:"QRify",
-width:220,
-height:220,
-correctLevel:QRCode.CorrectLevel.H
-})
-
-function switchMode(m){
-mode=m
-document.querySelectorAll('[id^=panel]').forEach(p=>p.classList.add('hidden'))
-document.querySelectorAll('[id^=btn]').forEach(b=>b.classList.remove('active'))
-document.getElementById(`panel-${m}`).classList.remove('hidden')
-document.getElementById(`btn-${m}`).classList.add('active')
-document.getElementById('title').innerText = m.toUpperCase()+" QR"
-}
-
-function generateQR(){
-let data=""
-if(mode==='text') data=textInput.value
-if(mode==='file') data=fileLink.value
-if(mode==='whatsapp') data=`https://wa.me/${wa.value}`
-if(mode==='facebook') data=`https://facebook.com/${fb.value}`
-if(mode==='instagram') data=`https://instagram.com/${ig.value}`
-if(mode==='linkedin') data=`https://linkedin.com/in/${li.value}`
-if(mode==='url') data=url.value
-if(mode==='wifi') data=`WIFI:T:WPA;S:${ssid.value};P:${pass.value};;`
-
-if(!data) return alert("Input is required")
-
-qr.makeCode(data)
-status.innerText="QR Code Generated Successfully"
-}
-
-function downloadQR(){
-const img=document.querySelector('#qrcode img')
-if(!img) return
-const a=document.createElement('a')
-a.href=img.src
-a.download='QRify.png'
-a.click()
-}
-</script>
 <footer class="global-footer">
-        <p>Site maintained by <a href="https://arnetworkhouse.in/" target="_blank" style="color:#78d7ff;text-decoration:underline;">AR NETWORK HOUSE</a> |</p>
-        <p>|  <a href="https://arnetworkhouse-oss.github.io/ar-network-house/more.html" target="_blank" style="color:#78d7ff;text-decoration:underline;">MORE GAMES </a>  | <a href="https://arnetworkhouse-oss.github.io/ar-network-house/feedback_QRify.html" target="_blank" style="color:#78d7ff;text-decoration:underline;">RATE US</a>  |</p>
-        </footer>
+  <p>Site maintained by <a href="https://arnetworkhouse.in/" target="_blank">AR NETWORK HOUSE</a> |</p>
+  <p>| <a href="https://arnetworkhouse-oss.github.io/ar-network-house/more.html" target="_blank">MORE GAMES</a> | <a href="https://arnetworkhouse-oss.github.io/ar-network-house/feedback_QRify.html" target="_blank">RATE US</a> |</p>
+</footer>
 
+<script>
+const $=id=>document.getElementById(id);
+const TABS={text:'📝 Text',file:'📄 File',wa:'💬 WhatsApp',fb:'📘 Facebook',ig:'📸 Instagram',li:'💼 LinkedIn',url:'🔗 Website',wifi:'📶 Wi-Fi'};
+const CC=[['India',91],['USA / Canada',1],['United Kingdom',44],['Bangladesh',880],['Pakistan',92],['Nepal',977],['Sri Lanka',94],['Bhutan',975],['Maldives',960],['Afghanistan',93],['UAE',971],['Saudi Arabia',966],['Qatar',974],['Kuwait',965],['Oman',968],['Bahrain',973],['Singapore',65],['Malaysia',60],['Indonesia',62],['Thailand',66],['Philippines',63],['China',86],['Japan',81],['South Korea',82],['Australia',61],['New Zealand',64],['Germany',49],['France',33],['Italy',39],['Spain',34],['Netherlands',31],['Russia',7],['Turkey',90],['Egypt',20],['South Africa',27],['Nigeria',234],['Kenya',254],['Brazil',55],['Mexico',52]];
+const DOTS=[['square','Square'],['rounded','Rounded'],['dots','Dots'],['classy-rounded','Classy'],['extra-rounded','Soft']];
+const EYES={sq:['square','square','Square'],rd:['extra-rounded','dot','Round'],ci:['dot','dot','Circle']};
+const PAL=[['#14110f','#14110f','#ffffff',0],['#ff4d2e','#ff9a2e','#fff7ee',1],['#1f3dff','#00c2ff','#f2f6ff',1],['#0f5132','#2fb36d','#f1faf4',1],['#6a1b9a','#e91e63','#fff5fb',1],['#8a5a00','#d4a017','#fffbe8',1]];
+
+let mode='text',waMode='direct';
+const S={dot:'square',eye:'sq',logo:''};
+
+/* QR engine: render 1024px, CSS scales it down -> sharp downloads */
+const qr=new QRCodeStyling({
+  width:1024,height:1024,type:'canvas',margin:40,data:'QRify',
+  qrOptions:{errorCorrectionLevel:'H'},
+  imageOptions:{crossOrigin:'anonymous',margin:6,imageSize:.3,hideBackgroundDots:true}
+});
+qr.append($('qr'));
+
+/* ---------- build UI ---------- */
+$('tabs').innerHTML=Object.entries(TABS).map(([k,v])=>`<button class="tab${k==='text'?' on':''}" data-m="${k}">${v}</button>`).join('');
+$('waCc').innerHTML=CC.map(([n,c])=>`<option value="${c}">${n} (+${c})</option>`).join('');
+$('sws').innerHTML=PAL.map((p,i)=>`<button class="sw" data-i="${i}" title="Palette ${i+1}" style="background:${p[3]?`linear-gradient(135deg,${p[0]},${p[1]})`:p[0]}"></button>`).join('');
+$('dots').innerHTML=DOTS.map(([k,n],i)=>`<button class="chip${i?'':' on'}" data-k="${k}">${n}</button>`).join('');
+$('eyes').innerHTML=Object.entries(EYES).map(([k,v],i)=>`<button class="chip${i?'':' on'}" data-k="${k}">${v[2]}</button>`).join('');
+
+/* ---------- helpers ---------- */
+const val=id=>$(id).value.trim();
+const digits=s=>s.replace(/\D/g,'');
+const proto=v=>/^https?:\/\//i.test(v)?v:'https://'+v;
+const social=(base,v)=>!v?'':/^(https?:\/\/|www\.)/i.test(v)?proto(v):base+v.replace(/^@/,'');
+const esc=s=>s.replace(/([\\;,:"])/g,'\\$1');
+function lum(h){const n=parseInt(h.slice(1),16),f=c=>{c/=255;return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4)};return .2126*f(n>>16)+.7152*f(n>>8&255)+.0722*f(n&255)}
+
+function withMsg(u){const m=val('waM');return m?u+(u.includes('?')?'&':'?')+'text='+encodeURIComponent(m):u}
+
+function build(){
+  switch(mode){
+    case'text':return $('tx').value.trim();
+    case'file':return val('fl')?proto(val('fl')):'';
+    case'wa':{
+      if(waMode==='manual'){
+        const d=digits(val('waN')).replace(/^0+/,'');
+        return d?withMsg(`https://wa.me/${$('waCc').value}${d}`):'';
+      }
+      const v=val('waD');if(!v)return'';
+      if(/^(https?:\/\/|wa\.me|api\.whatsapp)/i.test(v))return withMsg(proto(v));
+      const n=digits(v);return n?withMsg('https://wa.me/'+n):'';
+    }
+    case'fb':return social('https://facebook.com/',val('fb'));
+    case'ig':return social('https://instagram.com/',val('ig'));
+    case'li':return social('https://linkedin.com/in/',val('li'));
+    case'url':return val('ur')?proto(val('ur')):'';
+    case'wifi':{
+      if(!$('ssid').value)return'';
+      const e=$('enc').value;
+      return `WIFI:T:${e};S:${esc($('ssid').value)};${e!=='nopass'?`P:${esc($('pass').value)};`:''}${$('hid').checked?'H:true;':''};`;
+    }
+  }
+}
+
+/* ---------- render ---------- */
+function render(){
+  const c1=$('c1').value,c2=$('c2').value,g=$('grad').checked,em=$('eyeM').checked;
+  $('c2').disabled=!g;$('ec').disabled=em;
+  const st=(a,b)=>({type:'linear',rotation:Math.PI/4,colorStops:[{offset:0,color:a},{offset:1,color:b}]});
+  const dg=st(c1,g?c2:c1),eg=em?dg:st($('ec').value,$('ec').value);
+  const E=EYES[S.eye],data=build(),bg=$('tr').checked?'rgba(0,0,0,0)':$('bg').value;
+  $('lv').textContent=$('ls').value;
+
+  qr.update({
+    data:data||'QRify',
+    dotsOptions:{type:S.dot,color:c1,gradient:dg},
+    cornersSquareOptions:{type:E[0],color:c1,gradient:eg},
+    cornersDotOptions:{type:E[1],color:c1,gradient:eg},
+    backgroundOptions:{color:bg},
+    image:S.logo,
+    imageOptions:{imageSize:$('ls').value/100,margin:6,crossOrigin:'anonymous',hideBackgroundDots:true}
+  });
+
+  $('pv').classList.toggle('idle',!data);
+  $('dp').disabled=$('dj').disabled=!data;
+  $('st').textContent=data?`${TABS[mode].replace(/^\S+\s/,'')} QR ready`:'Awaiting input';
+  $('cnt').textContent=data?data.length+' chars':'';
+  $('wn').hidden=!(lum(c1)>lum($('bg').value)&&!$('tr').checked);
+}
+
+/* ---------- events ---------- */
+$('tabs').onclick=e=>{
+  const b=e.target.closest('.tab');if(!b)return;
+  mode=b.dataset.m;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t===b));
+  document.querySelectorAll('[data-p]').forEach(p=>p.hidden=p.dataset.p!==mode);
+  render();
+};
+
+$('waSeg').onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;
+  waMode=b.dataset.w;
+  document.querySelectorAll('#waSeg button').forEach(x=>x.classList.toggle('on',x===b));
+  const m=waMode==='manual';
+  $('waManual').hidden=!m;$('waD').hidden=m;
+  $('waHint').textContent=m?'Country code is added before your number automatically.':'Paste a ready link and it is used as-is. A plain number becomes wa.me/number.';
+  render();
+};
+
+$('sws').onclick=e=>{
+  const b=e.target.closest('.sw');if(!b)return;
+  const [a,c,bg,g]=PAL[b.dataset.i];
+  $('c1').value=a;$('c2').value=c;$('bg').value=bg;$('grad').checked=!!g;$('tr').checked=false;
+  render();
+};
+
+function chipGroup(id,key){
+  $(id).onclick=e=>{
+    const b=e.target.closest('.chip');if(!b)return;
+    S[key]=b.dataset.k;
+    $(id).querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c===b));
+    render();
+  };
+}
+chipGroup('dots','dot');chipGroup('eyes','eye');
+
+$('lf').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const url=URL.createObjectURL(f),im=new Image();
+  im.onload=()=>{
+    /* shrink big phone photos -> light + fast */
+    const m=320,k=Math.min(1,m/Math.max(im.width,im.height));
+    const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    URL.revokeObjectURL(url);
+    S.logo=c.toDataURL('image/png');
+    $('th').style.backgroundImage=`url(${S.logo})`;
+    $('th').hidden=$('lx').hidden=$('lsw').hidden=false;
+    render();
+  };
+  im.onerror=()=>URL.revokeObjectURL(url);
+  im.src=url;
+};
+$('lx').onclick=()=>{
+  S.logo='';$('lf').value='';
+  $('th').hidden=$('lx').hidden=$('lsw').hidden=true;
+  render();
+};
+
+document.addEventListener('input',render);
+document.addEventListener('change',render);
+
+/* ---------- download: canvas -> blob -> anchor (iOS: share sheet) ---------- */
+const IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function save(type){
+  const cv=$('qr').querySelector('canvas');
+  if(!cv||!build())return;
+  const o=document.createElement('canvas');o.width=cv.width;o.height=cv.height;
+  const x=o.getContext('2d');
+  if(type==='jpeg'){x.fillStyle=$('tr').checked?'#ffffff':$('bg').value;x.fillRect(0,0,o.width,o.height)}
+  x.drawImage(cv,0,0);
+  const name=`QRify-${mode}.${type==='jpeg'?'jpg':'png'}`;
+  o.toBlob(async b=>{
+    if(IOS){
+      const f=new File([b],name,{type:b.type});
+      try{
+        if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});return}
+      }catch(err){if(err.name==='AbortError')return}
+      window.open(URL.createObjectURL(b),'_blank'); /* long-press -> Save Image */
+      return;
+    }
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(b);a.download=name;
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+  },'image/'+type,.95);
+}
+$('dp').onclick=()=>save('png');
+$('dj').onclick=()=>save('jpeg');
+
+render();
+</script>
 </body>
 </html>
-
